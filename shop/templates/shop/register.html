@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Organic Store</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background:
+                linear-gradient(rgba(10, 30, 20, 0.65), rgba(10, 30, 20, 0.65)),
+                url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1600&q=80')
+                no-repeat center center/cover;
+            padding: 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 40px 35px;
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.25),
+                0 8px 20px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 34px;
+            font-weight: 700;
+            color: #1b4332;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        form p {
+            margin-bottom: 18px;
+        }
+
+        form label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+            background: #f9fafb;
+        }
+
+        form input:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+            background: #ffffff;
+        }
+
+        ul {
+            margin: 8px 0 0 20px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .errorlist {
+            list-style: none;
+            margin: 5px 0;
+            padding: 0;
+            color: #dc2626;
+            font-size: 13px;
+        }
+
+        .show-password {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .show-password input {
+            accent-color: #22c55e;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.25);
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 24px rgba(34, 197, 94, 0.35);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .footer-text a {
+            color: #16a34a;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 576px) {
+            .auth-card {
+                padding: 30px 22px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        <div class="logo">🌿</div>
+        <h1 class="title">Create Account</h1>
+        <p class="subtitle">Join Organic Store and enjoy fresh products delivered to your home.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="show-password">
+                <input type="checkbox" id="showPassword" onclick="togglePassword()">
+                <label for="showPassword">Show Password</label>
+            </div>
+
+            <button type="submit" class="btn">Create Account</button>
+        </form>
+
+        <p class="footer-text">
+            Already have an account?
+            <a href="{% url 'login' %}">Sign In</a>
+        </p>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const password1 = document.getElementById("id_password1");
+            const password2 = document.getElementById("id_password2");
+
+            if (password1) {
+                password1.type =
+                    password1.type === "password" ? "text" : "password";
+            }
+
+            if (password2) {
+                password2.type =
+                    password2.type === "password" ? "text" : "password";
+            }
+        }
+    </script>
+
+</body>
+</html>

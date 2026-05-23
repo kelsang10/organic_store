@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Organic Store Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins',sans-serif;
+            background:#f1f5f9;
+            display:flex;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar{
+            width:260px;
+            height:100vh;
+            background:#0f172a;
+            color:white;
+            position:fixed;
+            padding:25px;
+        }
+
+        .logo{
+            font-size:28px;
+            font-weight:800;
+            margin-bottom:30px;
+            color:#22c55e;
+        }
+
+        .sidebar a{
+            display:block;
+            text-decoration:none;
+            color:white;
+            padding:14px;
+            border-radius:12px;
+            margin-bottom:10px;
+            transition:0.3s;
+            font-weight:500;
+        }
+
+        .sidebar a:hover{
+            background:#1e293b;
+        }
+
+        /* MAIN */
+
+        .main{
+            margin-left:280px;
+            width:100%;
+            padding:30px;
+        }
+
+        .title{
+            font-size:34px;
+            font-weight:800;
+            margin-bottom:25px;
+            color:#111827;
+        }
+
+        /* CARDS */
+
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+            gap:20px;
+        }
+
+        .card{
+            background:white;
+            padding:25px;
+            border-radius:22px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.08);
+            transition:0.3s;
+        }
+
+        .card:hover{
+            transform:translateY(-5px);
+        }
+
+        .num{
+            font-size:34px;
+            font-weight:800;
+            color:#16a34a;
+        }
+
+        .label{
+            margin-top:8px;
+            color:#6b7280;
+            font-weight:500;
+        }
+
+        /* CHART */
+
+        .chart-box{
+            background:white;
+            margin-top:30px;
+            padding:25px;
+            border-radius:22px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.06);
+        }
+
+        /* TABLE */
+
+        .table-box{
+            background:white;
+            margin-top:30px;
+            padding:25px;
+            border-radius:22px;
+            box-shadow:0 10px 25px rgba(0,0,0,0.06);
+            overflow-x:auto;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+        }
+
+        th{
+            background:#16a34a;
+            color:white;
+            padding:14px;
+            text-align:left;
+        }
+
+        td{
+            padding:14px;
+            border-bottom:1px solid #f1f5f9;
+        }
+
+        tr:hover{
+            background:#f8fafc;
+        }
+
+        /* STATUS */
+
+        .pending{
+            color:#f59e0b;
+            font-weight:700;
+        }
+
+        .delivered{
+            color:#16a34a;
+            font-weight:700;
+        }
+
+        .processing{
+            color:#3b82f6;
+            font-weight:700;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:768px){
+
+            .sidebar{
+                display:none;
+            }
+
+            .main{
+                margin-left:0;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        🌿 Organic Admin
+    </div>
+
+    <a href="/dashboard/"> Dashboard</a>
+
+    <a href="/admin/"> Django Admin</a>
+
+    <a href="/"> Website</a>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+    <div class="title">
+          Admin Dashboard
+    </div>
+
+    <!-- CARDS -->
+
+    <div class="grid">
+
+        <div class="card">
+            <div class="num">{{ total_products }}</div>
+            <div class="label">Products</div>
+        </div>
+
+        <div class="card">
+            <div class="num">{{ total_orders }}</div>
+            <div class="label">Orders</div>
+        </div>
+
+        <div class="card">
+            <div class="num">
+                ₹{{ total_revenue|floatformat:2 }}
+            </div>
+            <div class="label">Revenue</div>
+        </div>
+
+        <div class="card">
+            <div class="num">{{ total_users }}</div>
+            <div class="label">Users</div>
+        </div>
+
+        <div class="card">
+            <div class="num">{{ pending_orders }}</div>
+            <div class="label">Pending Orders</div>
+        </div>
+
+        <div class="card">
+            <div class="num">{{ delivered_orders }}</div>
+            <div class="label">Delivered Orders</div>
+        </div>
+
+    </div>
+
+    <!-- CHART -->
+
+    <div class="chart-box">
+
+        <h2 style="margin-bottom:20px;">
+            Sales Analytics
+        </h2>
+
+        <canvas id="chart"></canvas>
+
+    </div>
+
+    <!-- RECENT ORDERS -->
+
+    <div class="table-box">
+
+        <h2 style="margin-bottom:20px;">
+             Recent Orders
+        </h2>
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+
+            {% for o in recent_orders %}
+
+            <tr>
+
+                <td>#{{ o.id }}</td>
+
+                <td>{{ o.user.username }}</td>
+
+                <td>
+                    ₹{{ o.total_amount|floatformat:2 }}
+                </td>
+
+                <td>
+
+                    {% if o.status == "Pending" %}
+
+                        <span class="pending">
+                            {{ o.status }}
+                        </span>
+
+                    {% elif o.status == "Delivered" %}
+
+                        <span class="delivered">
+                            {{ o.status }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="processing">
+                            {{ o.status }}
+                        </span>
+
+                    {% endif %}
+
+                </td>
+
+                <td>
+                    {{ o.created_at|date:"d M Y" }}
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="5">
+                    No orders available
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+new Chart(document.getElementById('chart'), {
+
+    type:'line',
+
+    data:{
+
+        labels: {{ labels|safe }},
+
+        datasets:[{
+
+            label:'Revenue',
+
+            data: {{ sales|safe }},
+
+            borderColor:'#16a34a',
+
+            backgroundColor:'rgba(34,197,94,0.2)',
+
+            tension:0.4,
+
+            fill:true
+
+        }]
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Cart | Organic Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background:
+                radial-gradient(circle at top left, #d1fae5, transparent 40%),
+                radial-gradient(circle at bottom right, #dbeafe, transparent 40%),
+                linear-gradient(180deg, #f9fafb, #f1f5f9);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #111827;
+        }
+
+        .cart-container {
+            max-width: 1150px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 2.2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .cart-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+        }
+
+        .cart-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ✅ FLASH MESSAGE STYLE (FIXED HERE) */
+        .message-box {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            border-left: 5px solid #ef4444;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 18px;
+            border-radius: 22px;
+            background: #ffffff;
+            margin-bottom: 18px;
+            border: 1px solid #eef2f7;
+            transition: all 0.35s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.10);
+        }
+
+        .cart-item img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .item-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #16a34a;
+            margin-top: 6px;
+        }
+
+        .item-quantity {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .remove-btn {
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ef4444;
+            text-decoration: none;
+        }
+
+        .summary {
+            background: linear-gradient(145deg, #ecfdf5, #eff6ff);
+            border-radius: 28px;
+            padding: 30px;
+            position: sticky;
+            top: 30px;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .total-amount {
+            font-size: 44px;
+            font-weight: 800;
+            color: #15803d;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            text-align: center;
+            padding: 16px;
+            border-radius: 16px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #111827;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .empty-cart h2 {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .empty-cart p {
+            color: #6b7280;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="cart-container">
+
+    <!-- CART ITEMS -->
+    <div class="cart-box">
+
+        <div class="cart-title">
+            🛒 Your Cart
+        </div>
+
+        <!-- ✅ MESSAGES FIXED HERE -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-box">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if cart_items %}
+
+            {% for item in cart_items %}
+            <div class="cart-item">
+
+                {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/120">
+                {% endif %}
+
+                <div class="item-details">
+                    <div class="item-name">{{ item.product.name }}</div>
+
+                    <div class="item-price">
+                        ₹{{ item.product.price }} × {{ item.quantity }} = ₹{{ item.subtotal }}
+                    </div>
+
+                    <div class="item-quantity">
+                        Quantity: {{ item.quantity }}
+                    </div>
+
+                    <a class="remove-btn" href="{% url 'remove_from_cart' item.id %}">
+                        🗑 Remove item
+                    </a>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-cart">
+                <h2>🛒 Your cart feels empty</h2>
+                <p>Start adding fresh organic products 🌿</p>
+
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    Start Shopping
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- SUMMARY -->
+    {% if cart_items %}
+    <div class="summary">
+
+        <div class="total-label">Grand Total</div>
+        <div class="total-amount">₹{{ total }}</div>
+
+        <div class="button-group">
+            <a href="{% url 'checkout' %}" class="btn btn-primary">
+                Proceed to Checkout
+            </a>
+
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                Continue Shopping
+            </a>
+        </div>
+
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout | Organic Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background:
+                radial-gradient(circle at top left, #dcfce7, transparent 40%),
+                radial-gradient(circle at bottom right, #dbeafe, transparent 40%),
+                linear-gradient(180deg, #f9fafb, #f1f5f9);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* MAIN BOX */
+        .box {
+            max-width: 650px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+        }
+
+        /* TITLE */
+        h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: #111827;
+        }
+
+        /* FORM STYLE */
+        form p {
+            margin-bottom: 18px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            outline: none;
+            font-size: 15px;
+            background: white;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34,197,94,0.15);
+        }
+
+        /* TOTAL BOX */
+        .total {
+            font-size: 22px;
+            font-weight: 700;
+            color: #15803d;
+            margin-top: 25px;
+            padding: 15px;
+            background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+            border: 1px solid #d1fae5;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        /* BUTTON */
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(34,197,94,0.25);
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(34,197,94,0.35);
+        }
+
+        /* BACK LINK */
+        a {
+            display: inline-block;
+            margin-top: 18px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        a:hover {
+            transform: translateX(-4px);
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .box {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 28px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1> Checkout</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <div class="total">
+             Total Payable: ₹{{ total }}
+        </div>
+
+        <button type="submit">
+             Place Order
+        </button>
+    </form>
+
+    <a href="{% url 'cart' %}">
+        ← Back to Cart
+    </a>
+
+</div>
+
+</body>
+</html>

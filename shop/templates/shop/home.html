@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Organic Store</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins',sans-serif;
+            background:#f8fafc;
+        }
+
+        /* NAVBAR */
+
+        .navbar{
+
+            background:white;
+            padding:18px 40px;
+
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            box-shadow:0 5px 20px rgba(0,0,0,0.05);
+
+            position:sticky;
+            top:0;
+            z-index:1000;
+        }
+
+        .logo{
+
+            font-size:28px;
+            font-weight:800;
+            color:#16a34a;
+        }
+
+        .nav-links a{
+
+            margin-left:18px;
+            text-decoration:none;
+            color:#111827;
+            font-weight:600;
+        }
+
+        /* HERO */
+
+        .hero{
+
+            padding:80px 20px;
+            text-align:center;
+
+            background:
+            linear-gradient(
+                rgba(0,0,0,0.4),
+                rgba(0,0,0,0.4)
+            ),
+
+            url('https://images.unsplash.com/photo-1542838132-92c53300491e');
+
+            background-size:cover;
+            background-position:center;
+
+            color:white;
+        }
+
+        .hero h1{
+
+            font-size:56px;
+            margin-bottom:10px;
+        }
+
+        .hero p{
+
+            font-size:20px;
+        }
+
+        /* SEARCH */
+
+        .search-box{
+
+            max-width:700px;
+            margin:30px auto;
+            display:flex;
+            gap:10px;
+            padding:0 20px;
+        }
+
+        .search-box input,
+        .search-box select{
+
+            flex:1;
+            padding:15px;
+            border-radius:12px;
+            border:1px solid #d1d5db;
+            font-size:15px;
+        }
+
+        .search-box button{
+
+            padding:15px 25px;
+            border:none;
+            border-radius:12px;
+            background:#16a34a;
+            color:white;
+            font-weight:700;
+            cursor:pointer;
+        }
+
+        .search-box button:hover{
+            background:#15803d;
+        }
+
+        /* PRODUCTS */
+
+        .products{
+
+            padding:50px 30px;
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(auto-fit,minmax(260px,1fr));
+
+            gap:25px;
+        }
+
+        .card{
+
+    background:white;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+
+    transition:0.3s;
+
+    position:relative;
+
+    max-width:320px;
+
+    margin:auto;
+}
+
+        .card:hover{
+
+            transform:translateY(-6px);
+        }
+
+        /* FIXED IMAGE SECTION */
+
+        .card img{
+
+    width:100%;
+
+    height:220px;
+
+    object-fit:contain;
+
+    background:#ffffff;
+
+    padding:15px;
+
+    display:block;
+}
+
+        .content{
+
+            padding:20px;
+        }
+
+        .name{
+
+            font-size:22px;
+            font-weight:700;
+        }
+
+        .desc{
+
+            color:#6b7280;
+            margin-top:10px;
+            font-size:14px;
+            line-height:1.6;
+        }
+
+        .price{
+
+            margin-top:15px;
+            font-size:24px;
+            font-weight:800;
+            color:#16a34a;
+        }
+
+        .old-price{
+
+            color:#9ca3af;
+            text-decoration:line-through;
+            font-size:16px;
+            margin-right:10px;
+        }
+
+        .rating{
+
+            margin-top:10px;
+            color:#f59e0b;
+            font-weight:700;
+        }
+
+        .badges{
+
+            margin-top:12px;
+        }
+
+        .badge{
+
+            display:inline-block;
+            padding:6px 12px;
+            border-radius:999px;
+            font-size:12px;
+            font-weight:700;
+            margin-right:6px;
+            margin-top:5px;
+        }
+
+        .organic{
+            background:#dcfce7;
+            color:#166534;
+        }
+
+        .delivery{
+            background:#dbeafe;
+            color:#1d4ed8;
+        }
+
+        .featured{
+            background:#fef3c7;
+            color:#92400e;
+        }
+
+        .btn{
+
+            display:block;
+            text-align:center;
+
+            margin-top:20px;
+
+            background:#16a34a;
+            color:white;
+
+            padding:14px;
+
+            border-radius:14px;
+
+            text-decoration:none;
+            font-weight:700;
+
+            transition:0.3s;
+        }
+
+        .btn:hover{
+            background:#15803d;
+        }
+
+        .delivery-text{
+
+            margin-top:12px;
+            color:#6b7280;
+            font-size:14px;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:768px){
+
+            .hero h1{
+                font-size:36px;
+            }
+
+            .navbar{
+                flex-direction:column;
+                gap:10px;
+            }
+
+            .search-box{
+                flex-direction:column;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+    <div class="logo">
+        🌿 Organic Store
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/"> Home</a>
+
+        <a href="/cart/">
+            🛒 Cart ({{ cart_count }})
+        </a>
+
+        {% if user.is_staff %}
+
+            <a href="/dashboard/">
+                 Dashboard
+            </a>
+
+            <a href="/admin/">
+                 Admin Panel
+            </a>
+
+        {% endif %}
+
+        {% if user.is_authenticated %}
+
+            <a href="/logout/">
+                 Logout
+            </a>
+
+        {% else %}
+
+            <a href="/login/">
+                 Login
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- HERO -->
+
+<div class="hero">
+
+    <h1>Fresh Organic Products</h1>
+
+    <p>
+        Fast Doorstep Delivery • Healthy • Sustainable
+    </p>
+
+</div>
+
+<!-- SEARCH -->
+
+<form method="GET">
+
+<div class="search-box">
+
+    <input
+    type="text"
+    name="q"
+    placeholder="Search products..."
+>
+
+    <select name="category">
+
+        <option value="">
+            All Categories
+        </option>
+
+        {% for c in categories %}
+
+        <option value="{{ c.id }}">
+            {{ c.name }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <button type="submit">
+        Search
+    </button>
+
+</div>
+
+</form>
+
+<!-- PRODUCTS -->
+
+<div class="products">
+
+{% for product in products %}
+
+<div class="card">
+
+    {% if product.image %}
+
+        <img
+            src="{{ product.image.url }}"
+            alt="{{ product.name }}"
+        >
+
+    {% else %}
+
+        <img
+            src="https://via.placeholder.com/300"
+            alt="Product"
+        >
+
+    {% endif %}
+
+    <div class="content">
+
+        <div class="name">
+            {{ product.name }}
+        </div>
+
+        <div class="desc">
+            {{ product.description|truncatewords:15 }}
+        </div>
+
+        <div class="rating">
+            ⭐ {{ product.rating }}/5
+        </div>
+
+        <div class="price">
+
+            {% if product.discount_price %}
+
+                <span class="old-price">
+                    ₹{{ product.price }}
+                </span>
+
+                ₹{{ product.discount_price }}
+
+            {% else %}
+
+                ₹{{ product.price }}
+
+            {% endif %}
+
+        </div>
+
+        <div class="badges">
+
+            {% if product.organic %}
+            <span class="badge organic">
+                🌿 Organic
+            </span>
+            {% endif %}
+
+            {% if product.fast_delivery %}
+            <span class="badge delivery">
+                 Fast Delivery
+            </span>
+            {% endif %}
+
+            {% if product.featured %}
+            <span class="badge featured">
+                 Featured
+            </span>
+            {% endif %}
+
+        </div>
+
+        <div class="delivery-text">
+             Delivered within 20-30 mins
+        </div>
+
+        <a
+            href="{% url 'add_to_cart' product.id %}"
+            class="btn"
+        >
+            Add To Cart
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

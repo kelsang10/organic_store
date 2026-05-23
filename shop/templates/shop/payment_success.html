@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment Successful</title>
+
+    <style>
+
+        body{
+            font-family:Arial;
+            background:#f0fdf4;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .box{
+            background:white;
+            padding:40px;
+            border-radius:20px;
+            text-align:center;
+            box-shadow:0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            color:#16a34a;
+        }
+
+        a{
+            display:inline-block;
+            margin-top:20px;
+            padding:14px 24px;
+            background:#16a34a;
+            color:white;
+            text-decoration:none;
+            border-radius:10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1> Payment Successful</h1>
+
+    <p>Order ID: #{{ order.id }}</p>
+
+    <p>Payment Method: {{ payment_method }}</p>
+
+    <h2>
+        ₹{{ order.total_amount }}
+    </h2>
+
+    <a href="/">
+        Continue Shopping
+    </a>
+
+</div>
+
+</body>
+</html>

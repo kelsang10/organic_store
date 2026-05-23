@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Successful | Organic Store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background:
+                radial-gradient(circle at top, #d1fae5, transparent 40%),
+                radial-gradient(circle at bottom, #dbeafe, transparent 40%),
+                linear-gradient(180deg, #f9fafb, #f1f5f9);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* CARD */
+        .box {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 28px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* SUCCESS ICON */
+        .icon {
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 15px 30px rgba(34,197,94,0.3);
+            animation: pop 0.8s ease;
+        }
+
+        .icon span {
+            font-size: 40px;
+            color: white;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* TITLE */
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #16a34a;
+            margin-bottom: 15px;
+        }
+
+        /* TEXT */
+        p {
+            font-size: 16px;
+            color: #374151;
+            margin: 8px 0;
+        }
+
+        p strong {
+            color: #111827;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            margin-top: 20px;
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #ecfdf5, #eff6ff);
+            border: 1px solid #d1fae5;
+        }
+
+        /* BUTTON */
+        a {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 14px 22px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white;
+            text-decoration: none;
+            border-radius: 14px;
+            font-weight: 700;
+            box-shadow: 0 15px 30px rgba(34,197,94,0.25);
+            transition: 0.3s;
+        }
+
+        a:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(34,197,94,0.35);
+        }
+
+        /* SMALL NOTE */
+        .note {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .box {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <div class="icon">
+        <span>✓</span>
+    </div>
+
+    <h1>Order Placed Successfully!</h1>
+
+    <div class="info-box">
+        <p>Order Number: <strong>#{{ order.id }}</strong></p>
+        <p>Total Amount: <strong>₹{{ order.total_amount }}</strong></p>
+    </div>
+
+    <a href="{% url 'home' %}">
+        🛍 Continue Shopping
+    </a>
+
+    <div class="note">
+        Thank you for shopping with Organic Store 🌿
+    </div>
+
+</div>
+
+</body>
+</html>
