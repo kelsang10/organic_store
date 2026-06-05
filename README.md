@@ -1,0 +1,4 @@
+# organic_store
+
+ Sustainable Organic Store is a full-stack Django-based e-commerce web application designed to promote healthy living and sustainable agriculture. The platform provides fresh organic fruits, vegetables, dairy products, grains, oils, tea, and dry fruits with fast doorstep delivery. It includes secure user authentication, cart system, checkout, payment simulation, admin dashboard analytics, product management, category filtering, and responsive modern UI. The project supports eco-friendly shopping and encourages responsible consumption aligned with Sustainable Development Goals (SDGs).
+
