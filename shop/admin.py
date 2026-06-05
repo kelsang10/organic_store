@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import Category, Product, Cart, Order, OrderItem
-
+from .models import KnowledgeBase
+from .utils import extract_pdf_text
+from .models import SustainabilityArticle
 
 # ---------------- CATEGORY ----------------
 @admin.register(Category)
@@ -42,3 +44,22 @@ class OrderAdmin(admin.ModelAdmin):
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'order', 'product', 'quantity', 'price')
     search_fields = ('order__id', 'product__name')
+
+
+@admin.register(KnowledgeBase)
+class KnowledgeBaseAdmin(admin.ModelAdmin):
+
+    list_display = ('title',)
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+
+        text = extract_pdf_text(obj.file.path)
+
+        obj.extracted_text = text
+        obj.save()
+
+@admin.register(SustainabilityArticle)
+class SustainabilityArticleAdmin(admin.ModelAdmin):
+    list_display = ('title', 'source')
+    search_fields = ('title', 'content')

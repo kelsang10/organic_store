@@ -136,6 +136,24 @@ class Order(models.Model):
         return f"Order #{self.id}"
 
 
+class KnowledgeBase(models.Model):
+    title = models.CharField(max_length=255)
+    file = models.FileField(upload_to='knowledge/')
+    extracted_text = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return self.title
+
+
+class SustainabilityArticle(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    source = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+
 # ---------------- ORDER ITEM ----------------
 class OrderItem(models.Model):
 

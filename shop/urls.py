@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import agent_chat
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -14,6 +15,8 @@ urlpatterns = [
     path("register/", views.register_view, name="register"),
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
-
+    path('ai-agent/', views.ai_agent, name='ai_agent'),
     path("dashboard/", views.dashboard, name="dashboard"),
+
+    path("chat/", agent_chat, name="agent_chat"),
 ]
