@@ -3,38 +3,14 @@ import re
 from collections import Counter
 from .models import SustainabilityArticle
 
-def build_context():
-    articles = SustainabilityArticle.objects.all()
-
-    context = []
-
-    for a in articles:
-        if a.content:
-            words = a.content.split()
-
-            for i in range(0, len(words), 200):
-                context.append({
-                    "text": " ".join(words[i:i+200]),
-                    "source": a.title
-                })
-
-    return context
 
 # ================= CLEAN TEXT =================
 def clean_text(text):
-    """
-    Clean PDF/OCR extracted text
-    """
-
     if not text:
         return ""
 
     text = text.encode("utf-8", "ignore").decode("utf-8")
-
-    # remove extra spaces
     text = re.sub(r"\s+", " ", text)
-
-    # remove weird symbols
     text = re.sub(r"[^\x20-\x7E\n]", "", text)
 
     return text.strip()
@@ -42,170 +18,214 @@ def clean_text(text):
 
 # ================= PDF EXTRACTION =================
 def extract_pdf_text(pdf_path):
-    """
-    Extract text from PDF and clean it
-    """
-
     reader = PdfReader(pdf_path)
-    pages_text = []
+    pages = []
 
     for page in reader.pages:
         text = page.extract_text()
-
         if text:
             cleaned = clean_text(text)
             if cleaned:
-                pages_text.append(cleaned)
+                pages.append(cleaned)
 
-    return "\n".join(pages_text)
+    return "\n".join(pages)
 
 
-# ================= CHUNKING (FIXED - RETURN LIST) =================
-def split_chunks(text, size=200):
-    """
-    Split text into word chunks (returns LIST, not generator)
-    IMPORTANT FIX: prevents reuse bugs
-    """
-
+# ================= SMART CHUNKING =================
+def split_chunks(text, size=120):
     if not text:
         return []
 
     words = text.split()
-    chunks = []
-
-    for i in range(0, len(words), size):
-        chunks.append(" ".join(words[i:i + size]))
-
-    return chunks
+    return [
+        " ".join(words[i:i + size])
+        for i in range(0, len(words), size)
+    ]
 
 
-# ================= TEXT SCORING ENGINE =================
+# ================= CONTEXT BUILDER =================
+def build_context():
+    articles = SustainabilityArticle.objects.all()
+    context = []
+
+    for a in articles:
+        if not a.content:
+            continue
+
+        chunks = split_chunks(a.content, size=120)
+
+        for chunk in chunks:
+            context.append({
+                "text": chunk,
+                "source": a.title
+            })
+
+    return context
+
+
+# ================= SMART SEMANTIC SCORING =================
 def score_text(question, text):
-    """
-    Advanced scoring:
-    - keyword match
-    - phrase match boost
-    """
+    q_words = [w for w in question.lower().split() if len(w) > 2]
+    t_words = text.lower().split()
 
-    question = question.lower()
-    text = text.lower()
-
-    keywords = [w for w in question.split() if len(w) > 3]
-
-    if not keywords:
+    if not q_words:
         return 0
+
+    q_counter = Counter(q_words)
+    t_counter = Counter(t_words)
 
     score = 0
 
-    # keyword matching
-    for k in keywords:
-        if k in text:
-            score += 1
+    # word overlap strength
+    for word in q_counter:
+        if word in t_counter:
+            score += min(5, t_counter[word])
 
-    # exact phrase boost
-    if question in text:
-        score += 5
+    # phrase boost
+    question_lower = question.lower()
+    if question_lower in text.lower():
+        score += 12
+
+    # consecutive phrase matching
+    for i in range(len(q_words) - 1):
+        phrase = q_words[i] + " " + q_words[i + 1]
+        if phrase in text.lower():
+            score += 6
 
     return score
 
 
-# ================= SMART AI SEARCH ENGINE =================
-def get_ai_answer(question, docs, articles):
-    """
-    RAG-style search:
-    - converts docs + articles into chunks
-    - scores each chunk
-    - returns best match
-    """
+# ================= UNIQUE SENTENCES =================
+def unique_sentences(text):
+    sentences = [s.strip() for s in text.split(".") if s.strip()]
 
-    question = question.strip().lower()
+    seen = set()
+    result = []
+
+    for s in sentences:
+        key = s.lower()
+        if key not in seen:
+            seen.add(key)
+            result.append(s)
+
+    return result
+
+
+# ================= CHATBOT ANSWER ENGINE =================
+def build_answer(question, sentences):
+    q_words = set(w for w in question.lower().split() if len(w) > 2)
+
+    scored = []
+
+    for s in sentences:
+        s_words = set(s.lower().split())
+        overlap = len(q_words.intersection(s_words))
+
+        if overlap > 0:
+            scored.append((overlap, s))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    top_sentences = [s for _, s in scored[:6]]
+
+    if not top_sentences:
+        return "I couldn't find a clear answer in the knowledge base."
+
+    # clean redundancy again
+    final_sentences = []
+    seen = set()
+
+    for s in top_sentences:
+        if s.lower() not in seen:
+            seen.add(s.lower())
+            final_sentences.append(s)
+
+    answer = ". ".join(final_sentences)
+
+    if not answer.endswith("."):
+        answer += "."
+
+    return answer
+
+
+# ================= MAIN CHATBOT ENGINE =================
+def get_ai_answer(question, docs, articles):
+
+    question = question.lower().strip()
 
     if not question:
-        return "Please ask a valid question."
+        return {
+            "answer": "Please ask a valid question.",
+            "source": None
+        }
 
     context = []
 
-    # ---------------- DOCS ----------------
+    # -------- documents --------
     for doc in docs:
-        if doc.extracted_text:
-            chunks = split_chunks(doc.extracted_text, 200)
+        if getattr(doc, "extracted_text", None):
+            context.append({
+                "text": doc.extracted_text,
+                "source": getattr(doc, "title", "Document")
+            })
 
-            for c in chunks:
-                context.append({
-                    "text": c,
-                    "source": getattr(doc, "title", "Document")
-                })
-
-    # ---------------- ARTICLES ----------------
+    # -------- articles --------
     for article in articles:
         if article.content:
-            chunks = split_chunks(article.content, 200)
+            context.append({
+                "text": article.content,
+                "source": article.title
+            })
 
-            for c in chunks:
-                context.append({
-                    "text": c,
-                    "source": article.title
-                })
-
-    # ---------------- SCORING ----------------
-    best_item = None
-    best_score = 0
+    # -------- scoring --------
+    scored = []
 
     for item in context:
-        score = score_text(question, item["text"])
+        s = score_text(question, item["text"])
+        if s > 0:
+            scored.append((s, item))
 
-        # penalize very long irrelevant chunks
-        if len(item["text"]) > 1000:
-            score -= 1
-
-        if score > best_score:
-            best_score = score
-            best_item = item
-
-    # ---------------- RESULT ----------------
-    if best_item and best_score >= 2:
+    if not scored:
         return {
-            "answer": best_item["text"],
-            "source": best_item["source"]
+            "answer": "I couldn't find relevant sustainability information for your question.",
+            "source": None
         }
 
+    # sort best matches
+    scored.sort(key=lambda x: x[0], reverse=True)
+
+    # pick best diverse sources
+    seen_sources = set()
+    top_items = []
+
+    for score, item in scored:
+        if item["source"] not in seen_sources:
+            top_items.append(item)
+            seen_sources.add(item["source"])
+
+        if len(top_items) == 3:
+            break
+
+    # combine context
+    combined_text = " ".join([t["text"] for t in top_items])
+
+    # sentence processing
+    sentences = unique_sentences(combined_text)
+
+    # final chatbot answer
+    answer = build_answer(question, sentences)
+
     return {
-        "answer": "No relevant information found in your admin documents. Please add better content.",
-        "source": None
+        "answer": answer,
+        "source": ", ".join([t["source"] for t in top_items])
     }
 
 
-# ================= SIMPLE MATCH HELPER =================
+# ================= SIMPLE MATCH (optional fallback) =================
 def simple_match(question, text):
-    """
-    Lightweight keyword helper
-    """
-
     question = question.lower()
     text = text.lower()
 
     keywords = [w for w in question.split() if len(w) > 3]
 
     return any(k in text for k in keywords)
-
-
-# ================= INTENT DETECTOR (VERY IMPORTANT) =================
-def detect_intent(question):
-    """
-    Separates SERVICE vs KNOWLEDGE questions
-    """
-
-    q = question.lower()
-
-    # service queries
-    if any(w in q for w in ["deliver", "delivery", "order", "buy", "price", "cost"]):
-        return "service"
-
-    # knowledge queries
-    if "what is" in q:
-        return "definition"
-
-    if any(w in q for w in ["benefit", "good", "healthy", "better"]):
-        return "knowledge"
-
-    return "knowledge"

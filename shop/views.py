@@ -14,8 +14,7 @@ from .models import (
 )
 
 from .forms import RegisterForm, CheckoutForm
-from .utils import build_context, get_ai_answer
-
+from .rag_engine import get_ai_answer
 
 # ================= HOME =================
 def home(request):
@@ -158,61 +157,6 @@ def checkout(request):
     })
 
 
-# ================= AI HELPERS =================
-def build_context():
-    articles = SustainabilityArticle.objects.all()
-
-    context = []
-
-    for a in articles:
-        if a.content:
-            chunks = a.content.split()
-
-            for i in range(0, len(chunks), 200):
-                context.append({
-                    "text": " ".join(chunks[i:i+200]),
-                    "source": a.title
-                })
-
-    return context
-
-
-def get_ai_answer(question, context):
-
-    question = question.lower()
-    keywords = [w for w in question.split() if len(w) > 3]
-
-    best_match = None
-    best_score = 0
-
-    for item in context:
-
-        text = item["text"].lower()
-
-        score = sum(1 for k in keywords if k in text)
-
-        if question in text:
-            score += 5
-
-        if len(text) > 800:
-            score -= 1
-
-        if score > best_score:
-            best_score = score
-            best_match = item
-
-    if best_match and best_score >= 2:
-        return {
-            "answer": best_match["text"],
-            "source": best_match["source"]
-        }
-
-    return {
-        "answer": "No relevant article found in admin database.",
-        "source": None
-    }
-
-
 # ================= AI PAGE =================
 def ai_agent(request):
 
@@ -222,41 +166,29 @@ def ai_agent(request):
 
     if request.method == "POST":
 
-        question = request.POST.get("question", "").strip().lower()
+        question = request.POST.get(
+            "question",
+            ""
+        ).strip()
 
-        context = build_context()
+        result = get_ai_answer(question)
 
-        if "organic farming" in question:
-            answer = "Organic farming reduces chemicals and improves soil health."
-            source = "System"
-            products = Product.objects.filter(organic=True)[:3]
+        answer = result["answer"]
+        source = result["source"]
 
-        elif "food waste" in question:
-            answer = "Reducing food waste helps environment and saves resources."
-            source = "System"
-            products = Product.objects.filter(organic=True)[:3]
+        products = Product.objects.filter(
+            organic=True
+        )[:3]
 
-        elif "immunity" in question:
-            answer = "Citrus fruits, ginger, turmeric boost immunity."
-            source = "System"
-            products = Product.objects.filter(organic=True)[:3]
-
-        elif "protein" in question:
-            answer = "Beans, lentils, nuts are high in protein."
-            source = "System"
-            products = Product.objects.all()[:3]
-
-        else:
-            result = get_ai_answer(question, context)
-            answer = result["answer"]
-            source = result["source"]
-            products = Product.objects.filter(organic=True)[:3]
-
-    return render(request, "shop/ai_agent.html", {
-        "answer": answer,
-        "products": products,
-        "source": source
-    })
+    return render(
+        request,
+        "shop/ai_agent.html",
+        {
+            "answer": answer,
+            "products": products,
+            "source": source
+        }
+    )
 
 
 # ================= CHAT API =================
@@ -264,40 +196,78 @@ def ai_agent(request):
 def agent_chat(request):
 
     if request.method != "POST":
-        return JsonResponse({"answer": "Only POST allowed"})
+        return JsonResponse({
+            "answer": "Only POST requests allowed."
+        })
 
-    question = request.POST.get("question", "").strip().lower()
+    question = request.POST.get(
+        "question",
+        ""
+    ).strip()
 
     if not question:
-        return JsonResponse({"answer": "Please ask a question."})
+        return JsonResponse({
+            "answer": "Please ask a question."
+        })
 
-    context = build_context()
+    # Store-related questions
+    if "delivery" in question.lower():
 
-    if "delivery" in question or "deliver" in question:
-        answer = "Yes, we provide home delivery for organic products."
+        answer = (
+            "Yes, we provide home delivery "
+            "for organic products."
+        )
+
         source = "System"
 
-    elif "order" in question or "buy" in question:
-        answer = "You can order products from our website cart."
+    elif (
+        "order" in question.lower()
+        or
+        "buy" in question.lower()
+    ):
+
+        answer = (
+            "You can order products using "
+            "the cart and checkout system."
+        )
+
         source = "System"
 
-    elif "price" in question or "cost" in question:
-        answer = "Prices depend on product type. Check product page."
+    elif (
+        "price" in question.lower()
+        or
+        "cost" in question.lower()
+    ):
+
+        answer = (
+            "Product prices are shown on "
+            "the product details page."
+        )
+
         source = "System"
 
     else:
-        result = get_ai_answer(question, context)
+
+        result = get_ai_answer(question)
+
         answer = result["answer"]
         source = result["source"]
 
-    products = Product.objects.filter(organic=True)[:3]
+    products = Product.objects.filter(
+        organic=True
+    )[:3]
 
     return JsonResponse({
         "answer": answer,
         "source": source,
-        "products": list(products.values("id", "name", "price"))
+        "products": list(
+            products.values(
+                "id",
+                "name",
+                "price"
+            )
+        )
     })
-
 
 # ================= PAYMENT =================
 @login_required

@@ -58,32 +58,36 @@
 
         .hero{
 
-            padding:80px 20px;
-            text-align:center;
+        padding:110px 20px;
 
-            background:
-            linear-gradient(
-                rgba(0,0,0,0.4),
-                rgba(0,0,0,0.4)
-            ),
+        text-align:center;
 
-            url('https://images.unsplash.com/photo-1542838132-92c53300491e');
+        background:
+        linear-gradient(
+            rgba(22,163,74,0.75),
+            rgba(5,150,105,0.75)
+        ),
 
-            background-size:cover;
-            background-position:center;
+        url('https://images.unsplash.com/photo-1542838132-92c53300491e');
 
-            color:white;
+        background-size:cover;
+        background-position:center;
+
+        color:white;
         }
 
         .hero h1{
 
-            font-size:56px;
-            margin-bottom:10px;
+            font-size:64px;
+            font-weight:800;
+            margin-bottom:15px;
         }
 
         .hero p{
 
-            font-size:20px;
+            font-size:22px;
+            max-width:700px;
+            margin:auto;
         }
 
         /* SEARCH */
@@ -281,6 +285,172 @@
             font-size:14px;
         }
 
+        .dropdown{
+        position:relative;
+        display:inline-block;
+        }
+
+        .dropbtn{
+            text-decoration:none;
+            color:#111827;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .dropdown-content{
+            display:none;
+            position:absolute;
+            top:100%;
+            left:0;
+
+            background:#fff;
+            min-width:180px;
+
+            border-radius:10px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.1);
+
+            z-index:1000;
+        }
+
+        .dropdown-content a{
+            display:block;
+            padding:12px 15px;
+            text-decoration:none;
+            color:#111827;
+        }
+
+        .dropdown-content a:hover{
+            background:#f0fdf4;
+            color:#16a34a;
+        }
+
+        /* IMPORTANT */
+        .dropdown:hover .dropdown-content{
+            display:block;
+        }
+
+
+        /* STATS */
+
+        .stats{
+
+            display:grid;
+
+            grid-template-columns:
+            repeat(auto-fit,minmax(220px,1fr));
+
+            gap:20px;
+
+            padding:50px 30px;
+
+            background:#f0fdf4;
+        }
+
+        .stat-box{
+
+            background:white;
+
+            padding:30px;
+
+            border-radius:20px;
+
+            text-align:center;
+
+            box-shadow:0 10px 25px rgba(22,163,74,0.12);
+
+            transition:0.3s;
+        }
+
+        .stat-box:hover{
+
+            transform:translateY(-5px);
+        }
+
+        .stat-box h2{
+
+            color:#16a34a;
+
+            font-size:34px;
+
+            font-weight:800;
+        }
+
+        .stat-box p{
+
+            margin-top:8px;
+
+            color:#4b5563;
+
+            font-weight:600;
+        }
+
+        /* AI BANNER */
+
+        .ai-banner{
+
+            margin:50px auto;
+
+            max-width:1100px;
+
+            background:
+            linear-gradient(
+                135deg,
+                #16a34a,
+                #15803d
+            );
+
+            color:white;
+
+            padding:50px;
+
+            border-radius:24px;
+
+            text-align:center;
+        }
+
+        .ai-banner h2{
+
+            font-size:38px;
+
+            margin-bottom:15px;
+        }
+
+        .ai-banner p{
+
+            font-size:18px;
+
+            line-height:1.8;
+
+            max-width:800px;
+
+            margin:auto;
+        }
+
+        .ai-banner a{
+
+            display:inline-block;
+
+            margin-top:25px;
+
+            background:white;
+
+            color:#16a34a;
+
+            padding:15px 30px;
+
+            border-radius:14px;
+
+            text-decoration:none;
+
+            font-weight:700;
+        }
+
+        .ai-banner a:hover{
+
+            transform:translateY(-2px);
+        }
+
+
         /* RESPONSIVE */
 
         @media(max-width:768px){
@@ -319,7 +489,7 @@
 
         <a href="/"> Home</a>
         <a href="{% url 'ai_agent' %}">
-    🤖 AI Agent
+     AI Agent
         </a>
         <a href="/cart/">
             🛒 Cart ({{ cart_count }})
@@ -327,16 +497,27 @@
 
         {% if user.is_staff %}
 
+    <div class="dropdown">
+
+        <a href="#" class="dropbtn">
+            Admin ▼
+        </a>
+
+        <div class="dropdown-content">
+
             <a href="/dashboard/">
-                 Dashboard
+                Dashboard
             </a>
 
             <a href="/admin/">
-                 Admin Panel
+                Manage Store
             </a>
 
-        {% endif %}
+        </div>
 
+    </div>
+
+{% endif %}
         {% if user.is_authenticated %}
 
             <a href="/logout/">
@@ -359,11 +540,59 @@
 
 <div class="hero">
 
-    <h1>Fresh Organic Products</h1>
+    <h1> AI-Powered Organic Marketplace</h1>
 
     <p>
-        Fast Doorstep Delivery • Healthy • Sustainable
+        Shop Fresh Organic Products, Support Sustainable Farming,
+        and Get Guidance from our AI Sustainability Assistant.
     </p>
+
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+    <div class="stat-box">
+        <h2>20+</h2>
+        <p>Organic Products</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>25+</h2>
+        <p>Sustainability Articles</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>AI</h2>
+        <p>Powered Assistant</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>100%</h2>
+        <p>Organic Focused</p>
+    </div>
+
+</div>
+
+<!-- AI BANNER -->
+
+<div class="ai-banner">
+
+    <h2> AI Sustainability Assistant</h2>
+
+    <p>
+        Ask questions about organic farming,
+        food waste reduction,
+        sustainable food choices,
+        climate change,
+        healthy eating,
+        and environmental protection.
+    </p>
+
+    <a href="{% url 'ai_agent' %}">
+        Chat With AI Assistant
+    </a>
 
 </div>
 
@@ -499,6 +728,21 @@
 {% endfor %}
 
 </div>
+<footer style="
+background:#111827;
+color:white;
+text-align:center;
+padding:40px;
+margin-top:60px;
+">
 
+    <h3>🌿 Organic Store</h3>
+
+    <p style="margin-top:10px;">
+        AI-Powered Sustainable Organic Food Marketplace
+        with Sustainability Assistant
+    </p>
+
+</footer>
 </body>
 </html>
